@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Bing · ID &amp; CMF Portfolio</title>
+<meta name="description" content="Industrial Design &amp; CMF portfolio from Transsion, 2023.">
+<link rel="icon" href="data:,">
+<style>
+  :root{
+    --bg:#0f1113;
+    --fg:#f2f2f2;
+    --muted:#9aa0a6;
+    --line:rgba(255,255,255,.12);
+    --panel:rgba(255,255,255,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg);
+    color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+
+  .bar{
+    position:sticky;top:0;z-index:20;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:0 20px;height:56px;
+    background:rgba(15,17,19,.82);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    font-size:14px;letter-spacing:.02em;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis;
+  }
+  .brand b{font-weight:600}
+  .brand span{color:var(--muted);margin:0 6px}
+  .meta{display:flex;align-items:center;gap:14px;flex:0 0 auto}
+  .count{font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:8px 14px;border-radius:999px;
+    background:var(--fg);color:#0f1113;text-decoration:none;
+    font-size:13px;font-weight:600;line-height:1;
+    transition:opacity .15s ease,transform .15s ease;
+  }
+  .btn:hover{opacity:.85}
+  .btn:active{transform:scale(.97)}
+  .btn svg{width:13px;height:13px}
+
+  .progress{position:sticky;top:56px;z-index:19;height:2px;background:transparent}
+  .progress i{display:block;height:100%;width:0;background:var(--fg);opacity:.55;transition:width .1s linear}
+
+  main{padding:24px 16px 8px}
+  #pages{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+  .page{
+    position:relative;width:100%;
+    background:#fff;border-radius:2px;
+    box-shadow:0 10px 34px rgba(0,0,0,.5);
+    overflow:hidden;
+  }
+  .page canvas{display:block;width:100%;height:100%}
+  .page[data-state="idle"]::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(100deg,#f4f4f4 30%,#e9e9e9 50%,#f4f4f4 70%);
+    background-size:200% 100%;
+    animation:shimmer 1.2s linear infinite;
+  }
+  @keyframes shimmer{from{background-position:150% 0}to{background-position:-50% 0}}
+
+  #status{
+    max-width:640px;margin:12vh auto 0;text-align:center;color:var(--muted);
+    font-size:14px;line-height:1.7;padding:0 24px;
+  }
+  #status a{color:var(--fg);text-decoration:underline;text-underline-offset:3px}
+  #status.hidden{display:none}
+  .spinner{
+    width:22px;height:22px;margin:0 auto 16px;border-radius:50%;
+    border:2px solid var(--line);border-top-color:var(--fg);
+    animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  footer{
+    max-width:1040px;margin:0 auto;padding:28px 16px 56px;
+    color:var(--muted);font-size:12.5px;line-height:1.8;text-align:center;
+  }
+  footer .sep{margin:0 8px;opacity:.5}
+
+  @media (max-width:600px){
+    .bar{height:52px;padding:0 14px}
+    .progress{top:52px}
+    .brand{font-size:13px}
+    .brand .long{display:none}
+    .count{display:none}
+    .btn{padding:7px 12px;font-size:12px}
+    main{padding:14px 10px 6px}
+    #pages{gap:14px}
+  }
+  @media print{
+    .bar,.progress,footer,#status{display:none}
+    body{background:#fff}
+    main{padding:0}
+    #pages{display:block;max-width:none}
+    .page{box-shadow:none;margin:0;page-break-after:always;border-radius:0}
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="brand"><b>Bing</b><span>·</span>ID &amp; CMF Portfolio<span class="long"></span></div>
+  <div class="meta">
+    <span class="count" id="count">— / —</span>
+    <a class="btn" id="dl" href="Bing-ID%26CMF-portfolio.pdf" download="Bing-ID&CMF-portfolio.pdf">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7"/><path d="M2.5 11.5v1A1.5 1.5 0 0 0 4 14h8a1.5 1.5 0 0 0 1.5-1.5v-1"/></svg>
+      下载 PDF
+    </a>
+  </div>
+</header>
+<div class="progress"><i id="bar"></i></div>
+
+<main>
+  <div id="status">
+    <div class="spinner" aria-hidden="true"></div>
+    <div id="statusText">正在加载作品集…</div>
+  </div>
+  <div id="pages"></div>
+</main>
+
+<footer>
+  Industrial Design &amp; CMF portfolio · Transsion 2023<span class="sep">/</span>
+  <a href="Bing-ID%26CMF-portfolio.pdf" target="_blank" rel="noopener">在新标签页打开原始 PDF</a>
+</footer>
+
+<noscript>
+  <p style="text-align:center;padding:40px 20px">
+    浏览器未启用 JavaScript，可直接 <a href="Bing-ID%26CMF-portfolio.pdf">下载 PDF</a> 查看。
+  </p>
+</noscript>
+
+<script src="vendor/pdf.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var PDF_URL = 'Bing-ID%26CMF-portfolio.pdf';
+  var MAX_DPR = 2;
+  var KEEP_PX = 2400; // 视口外多远之外的页面释放画布
+
+  var pagesEl = document.getElementById('pages');
+  var statusEl = document.getElementById('status');
+  var statusText = document.getElementById('statusText');
+  var countEl = document.getElementById('count');
+  var barEl = document.getElementById('bar');
+
+  var pdf = null;
+  var wraps = [];
+  var states = [];      // 'idle' | 'rendering' | 'done'
+  var current = 1;
+  var rafPending = false;
+
+  function fail(msg) {
+    statusEl.classList.remove('hidden');
+    statusEl.innerHTML = msg;
+  }
+
+  function cssWidth(el) {
+    var w = el.clientWidth;
+    return w > 0 ? w : 0;
+  }
+
+  function renderPage(i) {
+    if (!pdf || states[i] === 'rendering' || states[i] === 'done') return;
+    var wrap = wraps[i];
+    if (!wrap) return;
+    var width = cssWidth(wrap);
+    if (!width) return;
+
+    states[i] = 'rendering';
+    wrap.dataset.state = 'rendering';
+
+    pdf.getPage(i).then(function (page) {
+      if (states[i] !== 'rendering') return;
+      var dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+      var base = page.getViewport({ scale: 1 });
+      var scale = (cssWidth(wrap) * dpr) / base.width;
+      var vp = page.getViewport({ scale: scale });
+
+      var canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(vp.width));
+      canvas.height = Math.max(1, Math.round(vp.height));
+      var ctx = canvas.getContext('2d', { alpha: false });
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      return page.render({ canvasContext: ctx, viewport: vp }).promise.then(function () {
+        if (states[i] !== 'rendering') return;
+        wrap.innerHTML = '';
+        wrap.appendChild(canvas);
+        wrap.dataset.state = 'done';
+        states[i] = 'done';
+      });
+    }).catch(function (err) {
+      if (states[i] === 'rendering') {
+        states[i] = 'idle';
+        wrap.dataset.state = 'idle';
+      }
+      if (console && console.warn) console.warn('page ' + i, err);
+    });
+  }
+
+  function releasePage(i) {
+    if (states[i] !== 'done') return;
+    wraps[i].innerHTML = '';
+    wraps[i].dataset.state = 'idle';
+    states[i] = 'idle';
+  }
+
+  function updateChrome() {
+    rafPending = false;
+    var vh = window.innerHeight;
+    var best = current, bestDist = Infinity;
+    for (var i = 1; i < wraps.length; i++) {
+      var r = wraps[i].getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) {
+        var off = r.bottom < 0 ? -r.bottom : r.top - vh;
+        if (off > KEEP_PX) releasePage(i);
+        continue;
+      }
+      var d = Math.abs(r.top + r.height / 2 - vh / 2);
+      if (d < bestDist) { bestDist = d; best = i; }
+    }
+    if (best !== current) {
+      current = best;
+      countEl.textContent = current + ' / ' + (wraps.length - 1);
+    }
+    var max = document.documentElement.scrollHeight - vh;
+    barEl.style.width = max > 0 ? Math.min(100, (window.scrollY / max) * 100) + '%' : '0%';
+  }
+
+  function onScroll() {
+    if (rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(updateChrome);
+  }
+
+  function nearestVisible() {
+    var vh = window.innerHeight;
+    for (var i = 1; i < wraps.length; i++) {
+      var r = wraps[i].getBoundingClientRect();
+      if (r.bottom > vh * 0.35) return i;
+    }
+    return 1;
+  }
+
+  function renderAround() {
+    var first = nearestVisible();
+    for (var i = Math.max(1, first - 1); i <= Math.min(wraps.length - 1, first + 2); i++) {
+      renderPage(i);
+    }
+  }
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      for (var i = 1; i < wraps.length; i++) {
+        if (states[i] === 'done') {
+          wraps[i].innerHTML = '';
+          states[i] = 'idle';
+          wraps[i].dataset.state = 'idle';
+        }
+      }
+      renderAround();
+      updateChrome();
+    }, 200);
+  });
+
+  window.addEventListener('scroll', function () {
+    onScroll();
+    renderAround();
+  }, { passive: true });
+
+  if (!window.pdfjsLib) {
+    fail('加载阅读器失败。<a href="' + PDF_URL + '">点此下载 PDF</a> 直接查看。');
+    return;
+  }
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdf.worker.min.js';
+
+  pdfjsLib.getDocument({ url: PDF_URL }).promise.then(function (doc) {
+    pdf = doc;
+    var total = doc.numPages;
+    var frag = document.createDocumentFragment();
+    states = new Array(total + 1).fill('idle');
+    wraps = new Array(total + 1);
+
+    var chain = Promise.resolve();
+    for (var i = 1; i <= total; i++) {
+      (function (n) {
+        chain = chain.then(function () { return doc.getPage(n); }).then(function (page) {
+          var base = page.getViewport({ scale: 1 });
+          var el = document.createElement('div');
+          el.className = 'page';
+          el.dataset.state = 'idle';
+          el.dataset.page = String(n);
+          el.style.aspectRatio = base.width + ' / ' + base.height;
+          frag.appendChild(el);
+          wraps[n] = el;
+        });
+      })(i);
+    }
+
+    return chain.then(function () {
+      pagesEl.appendChild(frag);
+      countEl.textContent = '1 / ' + total;
+      statusEl.classList.add('hidden');
+      renderAround();
+      updateChrome();
+    });
+  }).catch(function (err) {
+    if (console && console.error) console.error(err);
+    fail('作品集加载失败。请 <a href="' + PDF_URL + '">下载 PDF</a> 直接查看，或刷新页面重试。');
+  });
+})();
+</script>
+</body>
+</html>
